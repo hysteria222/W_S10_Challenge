@@ -1,9 +1,15 @@
 import React from 'react'
 import { useGetHistoryQuery } from '../state/pizzaApi'
+import { useDispatch, useSelector } from 'react-redux'
+import { selectSizeFilter } from '../state/filters' 
+
 
 export default function OrderList() {
   const { data: history } = useGetHistoryQuery()
   const orders = history || []
+  const sizes = ['All', 'S', 'M', 'L']
+  const currentSize = useSelector(st => st.filters.currentSize)
+  const dispatch = useDispatch()
   console.log(orders)
 
   return (
@@ -25,11 +31,14 @@ export default function OrderList() {
       <div id="sizeFilters">
         Filter by size:
         {
-          ['All', 'S', 'M', 'L'].map(size => {
-            const className = `button-filter${size === 'All' ? ' active' : ''}`
+          sizes.map(size => {
+            const className = `button-filter${size === currentSize ? ' active' : ''}`
             return <button
               data-testid={`filterBtn${size}`}
               className={className}
+              onClick={() => {
+                dispatch(selectSizeFilter(size))
+              }}
               key={size}>{size}</button>
           })
         }
