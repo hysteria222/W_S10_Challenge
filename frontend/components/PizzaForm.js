@@ -4,28 +4,12 @@ import { useOrderPizzaMutation } from '../state/pizzaApi'
 const initialFormState = { // suggested
     fullName: '',
     size: '',
-    toppings: [
-    {
-      id: 1,
-      checkPepperoni: false,
-    },
-    {
-      id: 2,
-      checkGreenPeppers: false,
-    },
-    {
-      id: 3,
-      checkPineapple: false,
-    },
-    {
-      id: 4,
-      checkMushrooms: false,
-    },
-    {
-      id: 5, 
-      checkHam: false,
-    }
-  ]
+    checkPepperoni: false,
+    checkGreenPeppers: false,
+    checkPineapple: false,
+    checkMushrooms: false,
+    checkHam: false,
+    toppings: []
 }
 
 const CHANGE_FULL_NAME = 'CHANGE_FULL_NAME' 
@@ -51,32 +35,37 @@ function reducer(state, action) {
       }
       case CHECK_PEPPERONI: {
         return {
-          ...state.toppings,
-           
+          ...state,
+          checkPepperoni: !state.checkPepperoni,
+          toppings: [...state.toppings, action.payload]
         }
       }
       case CHECK_GREEN_PEPPERS: {
         return {
           ...state,
-          checkGreenPeppers: !state.checkGreenPeppers
+          checkGreenPeppers: !state.checkGreenPeppers,
+          toppings: [...state.toppings, action.payload]
         }
       }
       case CHECK_PINEAPPLE: {
         return {
           ...state,
-          checkPineapple: !state.checkPineapple
+          checkPineapple: !state.checkPineapple,
+          toppings: [...state.toppings, action.payload]
         }
       }
       case CHECK_MUSHROOMS: {
         return {
           ...state,
-          checkMushrooms: state.checkMushrooms
+          checkMushrooms: !state.checkMushrooms,
+          toppings: [...state.toppings, action.payload]
         }
       }
       case CHECK_HAM: {
         return {
           ...state,
-          checkHam: !state.checkHam
+          checkHam: !state.checkHam,
+          toppings: [...state.toppings, action.payload]
         }
       }
       default: 
@@ -86,7 +75,11 @@ function reducer(state, action) {
 
 
 export default function PizzaForm() {
-  const [orderPizza] = useOrderPizzaMutation()
+  const [orderPizza, {
+    isLoading: orderProcessing,
+    error: creationError,
+  }] = useOrderPizzaMutation()
+
   const [state, dispatch] = useReducer(reducer, initialFormState)
 
   const changeFullName = (e) => { 
@@ -98,55 +91,37 @@ export default function PizzaForm() {
     dispatch({ type: CHANGE_SIZE, payload: value})
   }
 
-  const updatePepperoniPls = (id) => {
-    dispatch({ type: CHECK_PEPPERONI, payload: id })
+  const updatePepperoniPls = (e) => {
+    const { name } = e.target 
+    dispatch({ type: CHECK_PEPPERONI, payload: name })
   }
-  const updateGreenPeppersPls = () => {
-    dispatch({ type: CHECK_GREEN_PEPPERS })
+  const updateGreenPeppersPls = (e) => {
+    const { name } = e.target 
+    dispatch({ type: CHECK_GREEN_PEPPERS, payload: name })
   }
-  const updatePineapplePls = () => {
-    dispatch({ type: CHECK_PINEAPPLE })
+  const updatePineapplePls = (e) => {
+    const { name } = e.target 
+    dispatch({ type: CHECK_PINEAPPLE, payload: name })
   }
-  const updateMushroomsPls = () => {
-    dispatch({ type: CHECK_MUSHROOMS })
+  const updateMushroomsPls = (e) => {
+    const { name } = e.target 
+    dispatch({ type: CHECK_MUSHROOMS, payload: name })
   }
-  const updateHamPls = () => {
-    dispatch({ type: CHECK_HAM })
+  const updateHamPls = (e) => {
+    const { name } = e.target 
+    dispatch({ type: CHECK_HAM, payload: name })
   }
-
-  const payloadMaker = () => {
-    const { 
-      fullName, 
-      size, 
-      checkPepperoni, 
-      checkGreenPeppers, 
-      checkPineapple, 
-      checkMushrooms, 
-      checkHam } = state 
-      const payload = {
-        'fullName': fullName,
-        'size': size,
-        'toppings': [
-          checkPepperoni, 
-          checkGreenPeppers, 
-          checkPineapple, 
-          checkMushrooms, 
-          checkHam
-        ]
-
-      }
-  } 
 
   const OnNewPizza = e => {
     e.preventDefault()
-    
+    orderPizza({ "fullName": state.fullName, "size": state.size, "toppings": state.toppings })
   }
 
   return (
     <form onSubmit={OnNewPizza}>
       <h2>Pizza Form</h2>
-      {true && <div className='pending'>Order in progress...</div>}
-      {true && <div className='failure'>Order failed: fullName is required</div>}
+      {orderProcessing && <div className='pending'>Order in progress...</div>}
+      {creationError && <div className='failure'>Order failed: fullName is required</div>}
 
       <div className="input-group">
         <div>
@@ -177,19 +152,19 @@ export default function PizzaForm() {
 
       <div className="input-group">
         <label>
-          <input data-testid="checkPepperoni" name="1" type="checkbox"   checked={state.checkPepperoni} value={state.toppings.id} onChange={updatePepperoniPls}/>
+          <input data-testid="checkPepperoni" name="1" type="checkbox" checked={state.checkPepperoni} onChange={updatePepperoniPls}/>
           Pepperoni<br /></label>
         <label>
-          <input data-testid="checkGreenPeppers" name="2" type="checkbox"  checked={state.checkGreenPeppers} value={state.toppings[1].id} onChange={updateGreenPeppersPls}/>
+          <input data-testid="checkGreenPeppers" name="2" type="checkbox" checked={state.checkGreenPeppers} onChange={updateGreenPeppersPls}/>
           Green Peppers<br /></label>
         <label>
-          <input data-testid="checkPineapple" name="3" type="checkbox" checked={state.checkPineapple} value={state.toppings[2].id} onChange={updatePineapplePls}/>
+          <input data-testid="checkPineapple" name="3" type="checkbox" checked={state.checkPineapple} onChange={updatePineapplePls}/>
           Pineapple<br /></label>
         <label>
-          <input data-testid="checkMushrooms" name="4" type="checkbox" checked={state.checkMushrooms} value={state.toppings[3].id} onChange={updateMushroomsPls}/>
+          <input data-testid="checkMushrooms" name="4" type="checkbox" checked={state.checkMushrooms} onChange={updateMushroomsPls}/>
           Mushrooms<br /></label>
         <label>
-          <input data-testid="checkHam" name="5" type="checkbox" checked={state.checkHam} value={state.toppings[4].id} onChange={updateHamPls}/>
+          <input data-testid="checkHam" name="5" type="checkbox" checked={state.checkHam} onChange={updateHamPls}/>
           Ham<br /></label>
       </div>
       <input data-testid="submit" type="submit" />

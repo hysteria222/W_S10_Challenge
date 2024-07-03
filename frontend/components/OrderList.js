@@ -5,7 +5,12 @@ import { selectSizeFilter } from '../state/filters'
 
 
 export default function OrderList() {
-  const { data: history } = useGetHistoryQuery()
+  const { data: history, 
+    isFetching: historyFetching, 
+    isLoading: historyLoading,
+    error: historyError,
+   } = useGetHistoryQuery()
+
   const orders = history || []
   const sizes = ['All', 'S', 'M', 'L']
   const currentSize = useSelector(st => st.filters.currentSize)
@@ -14,7 +19,13 @@ export default function OrderList() {
 
   return (
     <div id="orderList">
-      <h2>Pizza Orders</h2>
+      <h2>Pizza Orders {(
+        historyFetching ||
+        historyLoading 
+      ) && 'loading....'} 
+      {
+        historyError && historyError.data.message
+      }</h2>
       <ol>
         {
           orders.map((order, index) => {
