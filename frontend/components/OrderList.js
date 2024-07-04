@@ -15,9 +15,9 @@ export default function OrderList() {
   const sizes = ['All', 'S', 'M', 'L']
   const currentSize = useSelector(st => st.filters.currentSize)
   const dispatch = useDispatch()
-  console.log(orders)
-
+   
   return (
+
     <div id="orderList">
       <h2>Pizza Orders {(
         historyFetching ||
@@ -28,14 +28,15 @@ export default function OrderList() {
       }</h2>
       <ol>
         {
-          orders.map((order, index) => {
+          orders.map((order, index) => { 
+            if (order.size === currentSize || currentSize === 'All') {
             return (
               <li key={index}>
                 <div>
-                  <span>{order.customer} ordered a size {order.size} with {order.toppings.length} toppings</span>
+                  <span> {order.customer} ordered a size {order.size} with {order.toppings ? order.toppings.length + ' toppings': 'no toppings'} </span>
                 </div>
               </li>
-            )
+            )}
           })
         }
       </ol>

@@ -121,7 +121,7 @@ export default function PizzaForm() {
     <form onSubmit={OnNewPizza}>
       <h2>Pizza Form</h2>
       {orderProcessing && <div className='pending'>Order in progress...</div>}
-      {creationError && <div className='failure'>Order failed: fullName is required</div>}
+      {creationError && <div className='failure'>Order failed: {creationError.data.message}</div>}
 
       <div className="input-group">
         <div>
