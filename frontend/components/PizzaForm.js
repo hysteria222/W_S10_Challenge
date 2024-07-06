@@ -5,7 +5,7 @@ const initialFormState = { // suggested
     fullName: '',
     size: '',
     checkPepperoni: false,
-    checkGreenPeppers: false,
+    checkGreenpeppers: false,
     checkPineapple: false,
     checkMushrooms: false,
     checkHam: false,
@@ -45,8 +45,8 @@ function reducer(state, action) {
       case CHECK_GREEN_PEPPERS: {
         return {
           ...state,
-          checkGreenPeppers: !state.checkGreenPeppers,
-          toppings: state.checkGreenPeppers
+          checkGreenPeppers: !state.checkGreenpeppers,
+          toppings: state.checkGreenpeppers
           ? state.toppings.filter(tp => tp !== action.payload)
           : [...state.toppings, action.payload]
         }
@@ -125,7 +125,7 @@ export default function PizzaForm() {
     state.fullName = '',
     state.size = '',
     state.checkPepperoni = false,
-    state.checkGreenPeppers = false,
+    state.checkGreenpeppers = false,
     state.checkPineapple = false,
     state.checkMushrooms = false,
     state.checkHam = false,
@@ -137,7 +137,7 @@ export default function PizzaForm() {
     orderPizza({ "fullName": state.fullName, "size": state.size, "toppings": state.toppings })
     resetForm()
   }
-  console.log(creationError, state.size)
+
 
   return (
     <form onSubmit={OnNewPizza}>
@@ -177,7 +177,7 @@ export default function PizzaForm() {
           <input data-testid="checkPepperoni" name="1" type="checkbox" checked={state.checkPepperoni} onChange={updatePepperoniPls}/>
           Pepperoni<br /></label>
         <label>
-          <input data-testid="checkGreenPeppers" name="2" type="checkbox" checked={state.checkGreenPeppers} onChange={updateGreenPeppersPls}/>
+          <input data-testid="checkGreenpeppers" name="2" type="checkbox" checked={state.checkGreenpeppers} onChange={updateGreenPeppersPls}/>
           Green Peppers<br /></label>
         <label>
           <input data-testid="checkPineapple" name="3" type="checkbox" checked={state.checkPineapple} onChange={updatePineapplePls}/>
