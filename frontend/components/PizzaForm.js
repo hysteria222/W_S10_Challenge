@@ -37,35 +37,45 @@ function reducer(state, action) {
         return {
           ...state,
           checkPepperoni: !state.checkPepperoni,
-          toppings: [...state.toppings, action.payload]
+          toppings: state.checkPepperoni
+          ? state.toppings.filter(tp => tp !== action.payload)
+          : [...state.toppings, action.payload]
         }
       }
       case CHECK_GREEN_PEPPERS: {
         return {
           ...state,
           checkGreenPeppers: !state.checkGreenPeppers,
-          toppings: [...state.toppings, action.payload]
+          toppings: state.checkGreenPeppers
+          ? state.toppings.filter(tp => tp !== action.payload)
+          : [...state.toppings, action.payload]
         }
       }
       case CHECK_PINEAPPLE: {
         return {
           ...state,
           checkPineapple: !state.checkPineapple,
-          toppings: [...state.toppings, action.payload]
+          toppings: state.checkPineapple
+          ? state.toppings.filter(tp => tp !== action.payload)
+          : [...state.toppings, action.payload]
         }
       }
       case CHECK_MUSHROOMS: {
         return {
           ...state,
           checkMushrooms: !state.checkMushrooms,
-          toppings: [...state.toppings, action.payload]
+          toppings: state.checkMushrooms
+          ? state.toppings.filter(tp => tp !== action.payload)
+          : [...state.toppings, action.payload]
         }
       }
       case CHECK_HAM: {
         return {
           ...state,
           checkHam: !state.checkHam,
-          toppings: [...state.toppings, action.payload]
+          toppings: state.checkHam
+          ? state.toppings.filter(tp => tp !== action.payload)
+          : [...state.toppings, action.payload]
         }
       }
       default: 
@@ -111,11 +121,23 @@ export default function PizzaForm() {
     const { name } = e.target 
     dispatch({ type: CHECK_HAM, payload: name })
   }
+  const resetForm = () => { 
+    state.fullName = '',
+    state.size = '',
+    state.checkPepperoni = false,
+    state.checkGreenPeppers = false,
+    state.checkPineapple = false,
+    state.checkMushrooms = false,
+    state.checkHam = false,
+    state.toppings = []
+  }
 
   const OnNewPizza = e => {
     e.preventDefault()
     orderPizza({ "fullName": state.fullName, "size": state.size, "toppings": state.toppings })
+    resetForm()
   }
+  console.log(creationError, state.size)
 
   return (
     <form onSubmit={OnNewPizza}>
